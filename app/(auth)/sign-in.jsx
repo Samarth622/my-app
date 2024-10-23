@@ -14,7 +14,7 @@ import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import CustomButton from "../../components/CustomButton";
 import { router, Link } from "expo-router";
-import { saveToken, getToken } from "../../constants/token";
+import { saveToken } from "../../constants/token";
 import axios from "axios";
 
 const SignIn = () => {
@@ -25,10 +25,33 @@ const SignIn = () => {
 
   const [rememberMe, setRememberMe] = useState(false);
 
+  const validateForm = () => {
+    const mobilePattern = /^[0-9]{10}$/; // Simple pattern for 10-digit mobile number
+    if (!mobilePattern.test(form.mobile)) {
+      Alert.alert(
+        "Invalid Mobile Number",
+        "Please enter a valid 10-digit mobile number."
+      );
+      return false;
+    }
+
+    if (form.password.length < 6) {
+      Alert.alert(
+        "Invalid Password",
+        "Password must be at least 6 characters long."
+      );
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async () => {
+    if (!validateForm()) return;
     try {
       const response = await axios.post(
         "http://10.0.2.2:3000/api/v1/users/login",
+        // "http://192.168.71.137:3000/api/v1/users/login",
         {
           mobile: form.mobile,
           password: form.password,
@@ -42,11 +65,32 @@ const SignIn = () => {
         router.replace("/home");
       }
     } catch (error) {
-      console.log(error)
-      Alert.alert(
-        "Error during login:",
-        error.response?.data?.message || "Login failed"
-      );
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        const status = error.response.status;
+
+        if (status === 400) {
+          Alert.alert("Mobile and Password is required");
+          setForm({ mobile: "", password: "" });
+        } else if (status === 401) {
+          Alert.alert("Password is incorrect");
+          setForm({ password: "" }); // Keep mobile number, reset password
+        } else if (status === 404) {
+          Alert.alert("Mobile number does not exist");
+          setForm({ mobile: "", password: "" });
+        } else {
+          Alert.alert(
+            "Login failed",
+            "An unknown error occurred. Please try again."
+          );
+        }
+      } else {
+        // If the error doesn't have a response, it's a network or other issue
+        Alert.alert(
+          "Error during login:",
+          "Network error or server is not reachable."
+        );
+      }
     }
   };
 

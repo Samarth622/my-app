@@ -6,5 +6,6 @@ import logoSmall from "../assets/images/logo-small.png";
 import empty from "../assets/images/empty.png";
 import background from "../assets/images/background.png"
 import img from "../assets/images/img.png"
+import scanFood from "../assets/images/scanFood.png"
 
-export default { profile, thumbnail, img, path, logo, logoSmall, empty, background };
+export default { profile, thumbnail, img, path, logo, logoSmall, empty, background, scanFood };

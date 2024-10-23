@@ -31,9 +31,16 @@ const SignUp = () => {
       Alert.alert("Error", "You must agree to the terms and conditions.");
       return;
     }
+
+    if (form.mobile.length != 10) {
+      Alert.alert("Mobile is of 10 characters");
+      setForm({ name: "", email: "", mobile: "", password: "" });
+      setTermsAgreed(false);
+      return;
+    }
     try {
       const response = await axios.post(
-        // "http://192.168.181.137:3000/api/v1/users/signup",
+        // "http://192.168.71.137:3000/api/v1/users/signup",
         "http://10.0.2.2:3000/api/v1/users/signup",
         {
           name: form.name,
@@ -45,18 +52,39 @@ const SignUp = () => {
 
       if (response.status == 200) {
         Alert.alert("Signup Successful", "You have successfully signed up!");
-        form.name = ""
-        form.email = ""
-        form.mobile = ""
-        form.password = ""
-        router.push('sign-in')
+        form.name = "";
+        form.email = "";
+        form.mobile = "";
+        form.password = "";
+        router.push("sign-in");
       }
     } catch (error) {
-      console.error("Signup failed", error);
-      Alert.alert(
-        "Signup Failed",
-        error.response ? error.response.data.message : "An error occurred"
-      );
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        const status = error.response.status;
+
+        if (status === 400) {
+          Alert.alert("All Fields are required");
+          setForm({ name: "", email: "", mobile: "", password: "" });
+        } else if (status === 422) {
+          Alert.alert("Email is not valid or Minimum password length is 7");
+          setForm({ name: "", email: "", mobile: "", password: "" }); // Keep mobile number, reset password
+        } else if (status === 409) {
+          Alert.alert("Mobile already registered.");
+          setForm({ name: "", email: "", mobile: "", password: "" });
+        } else {
+          Alert.alert(
+            "Login failed",
+            "An unknown error occurred. Please try again."
+          );
+        }
+      } else {
+        // If the error doesn't have a response, it's a network or other issue
+        Alert.alert(
+          "Error during login:",
+          "Network error or server is not reachable."
+        );
+      }
     }
   };
 
