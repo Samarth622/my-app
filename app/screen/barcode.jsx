@@ -31,8 +31,8 @@ const Barcode = () => {
       const token = await getToken("accessToken");
 
       const response = await axios.post(
-        "http://10.0.2.2:3000/api/v1/products/analysis",
-        // "http://192.168.71.137:3000/api/v1/products/analysis",
+        // "http://10.0.2.2:3000/api/v1/products/analysis",
+        "http://192.168.36.137:3000/api/v1/products/analysis",
         {
           barcode,
           token,
@@ -46,15 +46,21 @@ const Barcode = () => {
       }
     } catch (error) {
       setLoading(false); // Stop the loader on error
-      console.log(error);
-      Alert.alert("Something went wrong");
+      if (error.response.status === 404) {
+        Alert.alert("Barcode not found");
+        setBarcode("");
+      } else {
+        console.log(error);
+        Alert.alert("Something went wrong");
+        setBarcode("");
+      }
     }
   };
 
   return (
     <ImageBackground source={images.background}>
       <SafeAreaView className="h-full">
-        <ScrollView contentContainerStyle={{ height: "100%" }}>
+        <ScrollView>
           <View className="w-full h-full px-6 mt-[60px]">
             <Text className="text-[35px] font-bold ml-[40px] text-gray-600">
               Barcode Reader

@@ -6,10 +6,13 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  BackHandler,
   FlatList,
   Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { getToken } from "../../constants/token";
+import axios from "axios";
 
 // Import all cat images statically
 import snacks from "../assets/images/cat/snacks.jpg";
@@ -30,6 +33,66 @@ import cat16 from "../assets/images/cat/vegetable.jpg";
 
 const Home = () => {
   const router = useRouter(); // Initialize the router
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [name, setName] = useState("User");
+  const [nameLetter, setNameLetter] = useState("");
+
+  // Check for token and update isAuthenticated state
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      const token = await getToken("accessToken");
+      setIsAuthenticated(!!token);
+    };
+
+    checkAuthentication();
+  }, []);
+
+  useEffect(() => {
+    const onBackPress = () => {
+      if (isAuthenticated) {
+        router.push('home')
+        return true;
+      }
+      else{
+        router.push('sign-in')
+        return false;
+      }
+    };
+
+    BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    };
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    const fetchName = async() => {
+      const token = await getToken("accessToken");
+      if (token) {
+        try {
+          const response = await axios.get(
+            "http://192.168.36.137:3000/api/v1/users/username",
+            // "http://10.0.2.2:3000/api/v1/users/username",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setName(response.data.data.name);
+          console.log(response.data.data.name[0])
+          setNameLetter(response.data.data.name[0])
+        } catch (error) {
+          Alert.alert("Error", "Failed to fetch profile.");
+        }
+      } else {
+        Alert.alert("Unauthorized", "No token found. Please sign in.");
+      }
+    }
+    fetchName();
+  }, [])
 
   // Image data for the slider
   const sliderImages = [
@@ -57,7 +120,23 @@ const Home = () => {
     { image: cat16, text: "Vegetable" },
   ];
   // Cat images array
-  const catImages = [snacks, cat3, cat4, cat5, cat6, cat7, cat8, cat9, cat10, cat11, cat12, cat13, cat14, cat15, cat16];
+  const catImages = [
+    snacks,
+    cat3,
+    cat4,
+    cat5,
+    cat6,
+    cat7,
+    cat8,
+    cat9,
+    cat10,
+    cat11,
+    cat12,
+    cat13,
+    cat14,
+    cat15,
+    cat16,
+  ];
 
   // State to track the current image index
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -95,9 +174,9 @@ const Home = () => {
         <View style={styles.circularBackground} />
         <View style={styles.header}>
           <View style={styles.userIcon}>
-            <Text style={styles.userIconText}>U</Text>
+            <Text style={styles.userIconText}>{nameLetter}</Text>
           </View>
-          <Text style={styles.headerText}>Hi, User</Text>
+          <Text style={styles.headerText}>Hi, {name}</Text>
         </View>
 
         <View style={styles.bannerContainer}>

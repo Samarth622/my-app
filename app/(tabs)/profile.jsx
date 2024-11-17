@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  BackHandler,
   Alert,
 } from "react-native";
 import axios from "axios";
@@ -34,8 +35,8 @@ const Profile = () => {
       if (token) {
         try {
           const response = await axios.get(
-            // "http://192.168.71.137:3000/api/v1/users/profile",
-            "http://10.0.2.2:3000/api/v1/users/profile",
+            "http://192.168.36.137:3000/api/v1/users/profile",
+            // "http://10.0.2.2:3000/api/v1/users/profile",
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -58,8 +59,8 @@ const Profile = () => {
     const token = await getToken("accessToken");
     try {
       const response = await axios.put(
-        // "http://192.168.71.137:3000/api/v1/users/editProfile",
-        "http://10.0.2.2:3000/api/v1/users/editProfile",
+        "http://192.168.36.137:3000/api/v1/users/editProfile",
+        // "http://10.0.2.2:3000/api/v1/users/editProfile",
         formData,
         {
           headers: {
@@ -97,8 +98,8 @@ const Profile = () => {
               { icon: "mail", placeholder: "Email", value: formData.email, key: "email" },
               { icon: "call", placeholder: "Phone number", value: formData.mobile, key: "mobile" },
               { icon: "calendar", placeholder: "Age", value: formData.Age, key: "Age" },
-              { icon: "body", placeholder: "Weight", value: formData.weight, key: "weight" },
-              { icon: "resize", placeholder: "Height", value: formData.height, key: "height" },
+              { icon: "body", placeholder: "Weight (KG)", value: formData.weight, key: "weight" },
+              { icon: "resize", placeholder: "Height (cm)", value: formData.height, key: "height" },
               { icon: "warning", placeholder: "Allergies", value: formData.allergies, key: "allergies" },
               { icon: "medkit", placeholder: "Medical History", value: formData.medicalHistory, key: "medicalHistory" },
               { icon: "water", placeholder: "Blood Group", value: formData.bloodGroup, key: "bloodGroup" },

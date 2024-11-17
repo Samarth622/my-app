@@ -54,8 +54,8 @@ const Analysis = () => {
   const handleData = async () => {
     try {
       const response = await axios.get(
-        // "http://192.168.71.137:3000/api/v1/products/detail"
-        "http://10.0.2.2:3000/api/v1/products/detail"
+        "http://192.168.36.137:3000/api/v1/products/detail"
+        // "http://10.0.2.2:3000/api/v1/products/detail"
       );
 
       if (response.status === 200) {
@@ -63,7 +63,7 @@ const Analysis = () => {
           response.data.data;
 
         setData(analysis);
-        setRating(healthMeter / 2.0);
+        setRating(healthMeter / 2.5);
         setProductName(productData.name);
         setImgUrl(productData.image);
         setDescription(productDescription);

@@ -9,7 +9,7 @@ const Scan = () => {
   return (
     <ImageBackground source={images.background}>
       <SafeAreaView className="h-full">
-        <ScrollView contentContainerStyle={{ height: "100%" }}>
+        <ScrollView>
           <View className="w-full h-full px-[20px] mt-4">
             <Text className="text-[35px] font-bold text-gray-600">
               Scan Your Meal
