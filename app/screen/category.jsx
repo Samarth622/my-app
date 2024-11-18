@@ -95,7 +95,9 @@ const Category = () => {
     setSuggestions([]); // Clear suggestions
   };
 
-  const renderSuggestions = suggestions.map((item, index) => (
+  const renderSuggestions = suggestions
+  .slice(0, 2) // Limit the array to the first 3 items
+  .map((item, index) => (
     <TouchableOpacity
       key={item.id ? item.id.toString() : `suggestion-${index}`}
       style={styles.suggestionItem}
