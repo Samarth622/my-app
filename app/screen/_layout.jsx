@@ -12,6 +12,7 @@ export default function ScrrenLayout() {
       <Stack.Screen name="upload" />
       <Stack.Screen name="analysis" />
       <Stack.Screen name="category" />
+      <Stack.Screen name="uploadAnalysis" />
     </Stack>
   );
 }

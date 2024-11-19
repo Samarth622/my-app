@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  TouchableOpacity, 
-  ScrollView, 
-  Image, 
-  StyleSheet, 
-  Alert 
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  StyleSheet,
+  Alert
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import axios from "axios";
 
 const Upload = () => {
   const [imageUri, setImageUri] = useState(null);
@@ -69,6 +70,45 @@ const Upload = () => {
     }
   };
 
+  const handleUpload = async () => {
+    if (!imageUri) {
+      Alert.alert("No Image", "Please select or capture an image first.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', {
+      uri: imageUri,
+      name: 'photo.jpg', // You can use a dynamic name if needed
+      type: 'image/jpeg', // Ensure this matches the image format
+    });
+
+    try {
+      const response = await axios.post(
+        'http://192.168.181.137:3000/api/v1/products/extractText',
+        formData, // Pass formData as the second argument
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data', // Set the content type
+          },
+        }
+      );
+
+      if (response.status == 200) {
+        console.log("Image uploaded successfully")
+        router.replace("screen/uploadAnalysis")
+        // Alert.alert("Success", `Extracted Text: ${result.data.extractedText}`);
+      } else {
+        console.log("Failed to upload image")
+        // Alert.alert("Error", result.message || 'Failed to upload image');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      // Alert.alert("Error", "Something went wrong while uploading.");
+    }
+  }
+
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -85,6 +125,9 @@ const Upload = () => {
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleChooseFromGallery}>
           <Text style={styles.buttonText}>Choose from Gallery</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleUpload}>
+          <Text style={styles.buttonText}>Upload Image</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

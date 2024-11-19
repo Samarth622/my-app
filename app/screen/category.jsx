@@ -33,7 +33,7 @@ const Category = () => {
     try {
       const response = await axios.get(
         // `http://10.0.2.2:3000/api/v1/products/productAnalysis?name=${name}`,
-          `http://192.168.36.137:3000/api/v1/products/productAnalysis?name=${name}`,
+          `http://192.168.181.137:3000/api/v1/products/productAnalysis?name=${name}`,
         {
           headers: {
             Authorization: `Bearer ${token}`, // Send token in the Authorization header
@@ -59,7 +59,7 @@ const Category = () => {
       try {
         const response = await axios.get(
           // `http://10.0.2.2:3000/api/v1/products/allProducts?category=${category}`
-          `http://192.168.36.137:3000/api/v1/products/allProducts?category=${category}`,
+          `http://192.168.181.137:3000/api/v1/products/allProducts?category=${category}`,
         );
         setProducts(response.data.data);
         setFilteredProducts(response.data.data);

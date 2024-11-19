@@ -35,7 +35,7 @@ const Profile = () => {
       if (token) {
         try {
           const response = await axios.get(
-            "http://192.168.36.137:3000/api/v1/users/profile",
+            "http://192.168.181.137:3000/api/v1/users/profile",
             // "http://10.0.2.2:3000/api/v1/users/profile",
             {
               headers: {
@@ -59,7 +59,7 @@ const Profile = () => {
     const token = await getToken("accessToken");
     try {
       const response = await axios.put(
-        "http://192.168.36.137:3000/api/v1/users/editProfile",
+        "http://192.168.181.137:3000/api/v1/users/editProfile",
         // "http://10.0.2.2:3000/api/v1/users/editProfile",
         formData,
         {
