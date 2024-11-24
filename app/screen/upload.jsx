@@ -6,13 +6,17 @@ import {
   ScrollView,
   Image,
   StyleSheet,
-  Alert
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from "axios";
+import { getToken } from "../../constants/token";
+import { router } from "expo-router";
 
 const Upload = () => {
   const [imageUri, setImageUri] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Request Permissions for Camera and Media Library
   const requestPermissions = async () => {
@@ -44,7 +48,7 @@ const Upload = () => {
     if (!hasPermission) return;
 
     const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaType.Images,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
     });
@@ -60,7 +64,7 @@ const Upload = () => {
     if (!hasPermission) return;
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaType.Images,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
     });
@@ -84,27 +88,30 @@ const Upload = () => {
     });
 
     try {
+      setIsLoading(true);
+
+      const token = await getToken("accessToken");
       const response = await axios.post(
-        'http://192.168.181.137:3000/api/v1/products/extractText',
+        'http://192.168.241.137:3000/api/v1/products/extractText',
         formData, // Pass formData as the second argument
         {
           headers: {
-            'Content-Type': 'multipart/form-data', // Set the content type
-          },
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${token}`
+          }
         }
       );
 
       if (response.status == 200) {
         console.log("Image uploaded successfully")
         router.replace("screen/uploadAnalysis")
-        // Alert.alert("Success", `Extracted Text: ${result.data.extractedText}`);
       } else {
         console.log("Failed to upload image")
-        // Alert.alert("Error", result.message || 'Failed to upload image');
       }
     } catch (error) {
       console.error('Upload error:', error);
-      // Alert.alert("Error", "Something went wrong while uploading.");
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -126,9 +133,16 @@ const Upload = () => {
         <TouchableOpacity style={styles.button} onPress={handleChooseFromGallery}>
           <Text style={styles.buttonText}>Choose from Gallery</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleUpload}>
-          <Text style={styles.buttonText}>Upload Image</Text>
-        </TouchableOpacity>
+        {isLoading ? (
+          <View style={{ marginTop: 20, alignItems: "center" }}>
+            <ActivityIndicator size="large" color="#4CAF50" />
+            <Text style={{ marginTop: 10 }}>Analyzing...</Text>
+          </View>
+        ) : (
+          <TouchableOpacity style={styles.button} onPress={handleUpload}>
+            <Text style={styles.buttonText}>Upload Image</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </ScrollView>
   );

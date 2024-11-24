@@ -40,7 +40,7 @@ const SignUp = () => {
     }
     try {
       const response = await axios.post(
-        "http://192.168.181.137:3000/api/v1/users/signup",
+        "http://192.168.241.137:3000/api/v1/users/signup",
         // "http://10.0.2.2:3000/api/v1/users/signup",
         {
           name: form.name,

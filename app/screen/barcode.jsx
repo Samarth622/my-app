@@ -32,7 +32,7 @@ const Barcode = () => {
 
       const response = await axios.post(
         // "http://10.0.2.2:3000/api/v1/products/analysis",
-        "http://192.168.181.137:3000/api/v1/products/analysis",
+        "http://192.168.241.137:3000/api/v1/products/analysis",
         {
           barcode,
           token,
