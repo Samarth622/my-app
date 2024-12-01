@@ -6,13 +6,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  BackHandler,
-  Alert,
 } from "react-native";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 import { getToken, deleteToken } from "../../constants/token.js";
 import { router } from "expo-router";
+import Toast from "react-native-toast-message";
 
 const Profile = () => {
   const [profileData, setProfileData] = useState(null);
@@ -35,8 +34,7 @@ const Profile = () => {
       if (token) {
         try {
           const response = await axios.get(
-            "http://192.168.241.137:3000/api/v1/users/profile",
-            // "http://10.0.2.2:3000/api/v1/users/profile",
+            "http://192.168.246.137:3000/api/v1/users/profile",
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -44,12 +42,20 @@ const Profile = () => {
             }
           );
           setProfileData(response.data.data.user);
-          setFormData(response.data.data.user); 
+          setFormData(response.data.data.user);
         } catch (error) {
-          Alert.alert("Error", "Failed to fetch profile.");
+          Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "Failed to fetch profile.",
+          });
         }
       } else {
-        Alert.alert("Unauthorized", "No token found. Please sign in.");
+        Toast.show({
+          type: "info",
+          text1: "Unauthorized",
+          text2: "No token found. Please sign in.",
+        });
       }
     };
     fetchProfile();
@@ -59,8 +65,7 @@ const Profile = () => {
     const token = await getToken("accessToken");
     try {
       const response = await axios.put(
-        "http://192.168.241.137:3000/api/v1/users/editProfile",
-        // "http://10.0.2.2:3000/api/v1/users/editProfile",
+        "http://192.168.246.137:3000/api/v1/users/editProfile",
         formData,
         {
           headers: {
@@ -69,10 +74,18 @@ const Profile = () => {
         }
       );
       setProfileData(response.data.data.updatedUser);
-      setIsEditable(false); 
-      Alert.alert("Success", "Profile updated successfully!");
+      setIsEditable(false);
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Profile updated successfully!",
+      });
     } catch (error) {
-      Alert.alert("Error", "Failed to update profile.");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to update profile.",
+      });
     }
   };
 
@@ -81,10 +94,16 @@ const Profile = () => {
   };
 
   const handleLogout = async () => {
-    Alert.alert("Logout Successfully!!!!!")
     await deleteToken("accessToken");
-    router.replace("sign-in")
-  }
+    Toast.show({
+      type: "success",
+      text1: "Logout",
+      text2: "You have logged out successfully!",
+    });
+    setInterval(() => {
+      router.replace("auth/sign-in");
+    }, 900)
+  };
 
   return (
     <ScrollView>
@@ -143,6 +162,7 @@ const Profile = () => {
           )}
         </View>
       </View>
+      <Toast />
     </ScrollView>
   );
 };
@@ -180,7 +200,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   button: {
-    backgroundColor: "#66cf17",
+    backgroundColor: "#21bf73",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",

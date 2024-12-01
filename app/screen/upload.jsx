@@ -13,6 +13,7 @@ import * as ImagePicker from 'expo-image-picker';
 import axios from "axios";
 import { getToken } from "../../constants/token";
 import { router } from "expo-router";
+import Toast from 'react-native-toast-message';
 
 const Upload = () => {
   const [imageUri, setImageUri] = useState(null);
@@ -24,18 +25,20 @@ const Upload = () => {
     const mediaLibraryPermission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!cameraPermission.granted) {
-      Alert.alert(
-        "Permission Denied",
-        "Camera access is required to take photos."
-      );
+      Toast.show({
+        type: 'error',
+        text1: 'Permission Denied',
+        text2: 'Camera access is required to take photos.',
+      });
       return false;
     }
 
     if (!mediaLibraryPermission.granted) {
-      Alert.alert(
-        "Permission Denied",
-        "Media library access is required to select photos."
-      );
+      Toast.show({
+        type: 'error',
+        text1: 'Permission Denied',
+        text2: 'Media library access is required to select photos.',
+      });
       return false;
     }
 
@@ -55,6 +58,11 @@ const Upload = () => {
 
     if (!result.canceled) {
       setImageUri(result.assets[0].uri); // Set image URI to display preview
+      Toast.show({
+        type: 'success',
+        text1: 'Photo Captured',
+        text2: 'Your photo has been captured successfully.',
+      });
     }
   };
 
@@ -71,12 +79,21 @@ const Upload = () => {
 
     if (!result.canceled) {
       setImageUri(result.assets[0].uri); // Set image URI to display preview
+      Toast.show({
+        type: 'success',
+        text1: 'Image Selected',
+        text2: 'Your image has been selected successfully.',
+      });
     }
   };
 
   const handleUpload = async () => {
     if (!imageUri) {
-      Alert.alert("No Image", "Please select or capture an image first.");
+      Toast.show({
+        type: 'error',
+        text1: 'No Image',
+        text2: 'Please select or capture an image first.',
+      });
       return;
     }
 
@@ -92,7 +109,7 @@ const Upload = () => {
 
       const token = await getToken("accessToken");
       const response = await axios.post(
-        'http://192.168.241.137:3000/api/v1/products/extractText',
+        'http://192.168.246.137:3000/api/v1/products/extractText',
         formData, // Pass formData as the second argument
         {
           headers: {
@@ -102,19 +119,33 @@ const Upload = () => {
         }
       );
 
-      if (response.status == 200) {
-        console.log("Image uploaded successfully")
-        router.replace("screen/uploadAnalysis")
+      if (response.status === 200) {
+        Toast.show({
+          type: 'success',
+          text1: 'Upload Successful',
+          text2: 'Redirecting to analysis page...',
+        });
+        setTimeout(() => {
+          router.replace("screen/uploadAnalysis");
+        }, 900);
       } else {
-        console.log("Failed to upload image")
+        Toast.show({
+          type: 'error',
+          text1: 'Upload Failed',
+          text2: 'Something went wrong. Please try again.',
+        });
       }
     } catch (error) {
       console.error('Upload error:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'An error occurred during upload. Please try again.',
+      });
     } finally {
       setIsLoading(false);
     }
-  }
-
+  };
 
   return (
     <ScrollView>
@@ -144,6 +175,7 @@ const Upload = () => {
           </TouchableOpacity>
         )}
       </View>
+      <Toast />
     </ScrollView>
   );
 };
@@ -180,7 +212,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    backgroundColor: '#007BFF',
+    backgroundColor: '#21bf73',
     padding: 12,
     borderRadius: 8,
     marginVertical: 8,

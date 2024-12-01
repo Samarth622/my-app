@@ -3,14 +3,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../constants";
 import CustomButton from "../components/CustomButton";
 import { StatusBar } from "expo-status-bar";
-import { Redirect, router } from "expo-router";
+import { router } from "expo-router";
 
 export default function App() {
   return (
     <SafeAreaView className="h-full">
-      <ImageBackground source={images.background}>
+      <ImageBackground source={images.start}>
         <ScrollView contentContainerStyle={{ height: "100%" }}>
-          <View className="w-full items-center min-h-[85vh] px-4">
+          <View className="w-[100%] items-center min-h-[85vh] px-4 mt-[40px]">
             <Image
               source={images.logo}
               className="w-[130px] h-[90px] mb-5"
@@ -21,7 +21,7 @@ export default function App() {
               className="max-w-[400px] w-full h-[330px]"
             />
 
-            <View className="relative mt-5">
+            <View className="relative">
               <Text className="text-3xl text-black font-bold text-center">
                 Eat Healthy
               </Text>
@@ -33,7 +33,7 @@ export default function App() {
 
             <CustomButton
               title="Get Started"
-              handlePress={() => router.push("/sign-up")}
+              handlePress={() => router.push("auth/sign-up")}
               containerStyles="w-full mt-7"
             />
           </View>
@@ -43,3 +43,4 @@ export default function App() {
     </SafeAreaView>
   );
 }
+

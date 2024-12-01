@@ -4,7 +4,6 @@ import {
   ImageBackground,
   ScrollView,
   StyleSheet,
-  Alert,
   TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
@@ -15,6 +14,7 @@ import FormField from "../../components/FormField";
 import CustomButton from "../../components/CustomButton";
 import { router, Link } from "expo-router";
 import axios from "axios";
+import Toast from "react-native-toast-message";
 
 const SignUp = () => {
   const [form, setForm] = useState({
@@ -28,20 +28,27 @@ const SignUp = () => {
 
   const handleSubmit = async () => {
     if (!termsAgreed) {
-      Alert.alert("Error", "You must agree to the terms and conditions.");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "You must agree to the terms and conditions.",
+      });
       return;
     }
 
-    if (form.mobile.length != 10) {
-      Alert.alert("Mobile is of 10 characters");
-      // setForm({ name: "", email: "", mobile: "", password: "" });
+    if (form.mobile.length !== 10) {
+      Toast.show({
+        type: "error",
+        text1: "Invalid Mobile",
+        text2: "Mobile number must be 10 digits long.",
+      });
       setTermsAgreed(false);
       return;
     }
+
     try {
       const response = await axios.post(
-        "http://192.168.241.137:3000/api/v1/users/signup",
-        // "http://10.0.2.2:3000/api/v1/users/signup",
+        "http://192.168.246.137:3000/api/v1/users/signup",
         {
           name: form.name,
           email: form.email,
@@ -50,49 +57,61 @@ const SignUp = () => {
         }
       );
 
-      if (response.status == 200) {
-        Alert.alert("Signup Successful", "You have successfully signed up!");
-        form.name = "";
-        form.email = "";
-        form.mobile = "";
-        form.password = "";
-        router.push("sign-in");
+      if (response.status === 200) {
+        Toast.show({
+          type: "success",
+          text1: "Signup Successful",
+          text2: "You have successfully signed up!",
+        });
+        setForm({ name: "", email: "", mobile: "", password: "" });
+        setTimeout(() => {
+          router.push("auth/sign-in");
+        }, 900)
       }
     } catch (error) {
       if (error.response) {
-        // The request was made and the server responded with a status code
         const status = error.response.status;
 
         if (status === 400) {
-          Alert.alert("All Fields are required");
-          // setForm({ name: "", email: "", mobile: "", password: "" });
+          Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "All fields are required.",
+          });
         } else if (status === 422) {
-          Alert.alert("Email is not valid or Minimum password length is 7");
-          // setForm({ name: "", email: "", mobile: "", password: "" }); // Keep mobile number, reset password
+          Toast.show({
+            type: "error",
+            text1: "Validation Error",
+            text2: "Invalid email or password must be at least 7 characters.",
+          });
         } else if (status === 409) {
-          Alert.alert("Mobile already registered.");
-          // setForm({ name: "", email: "", mobile: "", password: "" });
+          Toast.show({
+            type: "error",
+            text1: "Conflict",
+            text2: "Mobile number already registered.",
+          });
         } else {
-          Alert.alert(
-            "Login failed",
-            "An unknown error occurred. Please try again."
-          );
+          Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "An unknown error occurred. Please try again.",
+          });
         }
       } else {
-        // If the error doesn't have a response, it's a network or other issue
-        Alert.alert(
-          "Error during login:",
-          "Network error or server is not reachable."
-        );
+        Toast.show({
+          type: "error",
+          text1: "Network Error",
+          text2: "Server not reachable. Please try again later.",
+        });
       }
     }
   };
 
   return (
-    <ImageBackground source={images.background}>
+    <ImageBackground source={images.lr}>
       <SafeAreaView className="h-full">
-        <ScrollView contentContainerStyle={{ height: "100%" }}>
-          <View className="w-full h-full items-center">
+        <ScrollView>
+          <View className="w-full h-full items-center mt-[90px]">
             <Text className="text-[35px] font-bold text-gray-500">
               Register
             </Text>
@@ -160,6 +179,7 @@ const SignUp = () => {
           </View>
         </ScrollView>
       </SafeAreaView>
+      <Toast />
     </ImageBackground>
   );
 };
@@ -179,18 +199,6 @@ const styles = StyleSheet.create({
   link: {
     color: "#4CAF50",
     textDecorationLine: "underline",
-    fontWeight: "bold",
-  },
-  registerButton: {
-    backgroundColor: "#4CAF50",
-    padding: 15,
-    borderRadius: 5,
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  registerButtonText: {
-    color: "#fff",
-    fontSize: 18,
     fontWeight: "bold",
   },
   loginText: {

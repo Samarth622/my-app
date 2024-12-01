@@ -13,7 +13,7 @@ const CustomButton = ({
       activeOpacity={0.7}
       className={`${containerStyles} rounded-xl
        min-h-[62px] justify-center items-center`}
-      style={{backgroundColor: "#66cf17"}}
+      style={{backgroundColor: "#21bf73"}}
     >
       <Text className={`text-white font-bold text-lg ${textStyles}`}>{title}</Text>
     </TouchableOpacity>

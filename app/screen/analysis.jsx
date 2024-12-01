@@ -14,6 +14,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ProgressBar } from "react-native-paper";
 import { images } from "../../constants";
+import Toast from "react-native-toast-message";
 
 const Analysis = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -54,8 +55,7 @@ const Analysis = () => {
   const handleData = async () => {
     try {
       const response = await axios.get(
-        "http://192.168.241.137:3000/api/v1/products/detail"
-        // "http://10.0.2.2:3000/api/v1/products/detail"
+        "http://192.168.246.137:3000/api/v1/products/detail"
       );
 
       if (response.status === 200) {
@@ -67,11 +67,23 @@ const Analysis = () => {
         setProductName(productData.name);
         setImgUrl(productData.image);
         setDescription(productDescription);
+
+        Toast.show({
+          type: "success",
+          text1: "Data Loaded Successfully",
+          text2: "The product analysis data has been fetched.",
+        });
       }
     } catch (error) {
       console.log("Error from analysis: ", error);
+      Toast.show({
+        type: "error",
+        text1: "Failed to Load Data",
+        text2: "There was an error fetching the product data. Please try again.",
+      });
     }
   };
+
 
   useEffect(() => {
     handleData();
@@ -147,7 +159,7 @@ const Analysis = () => {
                     <Text style={styles.scoreBox}>Score: {selectedTag[1]}</Text>
                     <Text style={styles.descriptionTitle}>Description:</Text>
                     <Text style={styles.description}>{selectedTag[2]}</Text>
-                    <Button title="Close" onPress={closeModal} />
+                    <Button title="Close" style={{backgroundColor: "#21bf73"}} onPress={closeModal} />
                   </View>
                 </View>
               </Modal>
@@ -178,8 +190,10 @@ const Analysis = () => {
             <Text style={styles.conclusionHeader}>Conclusion</Text>
             <Text style={styles.conclusionText}>{description}</Text>
           </View>
+          
         </View>
       </ScrollView>
+      <Toast />
     </ImageBackground>
   );
 };

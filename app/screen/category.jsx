@@ -33,7 +33,7 @@ const Category = () => {
     try {
       const response = await axios.get(
         // `http://10.0.2.2:3000/api/v1/products/productAnalysis?name=${name}`,
-          `http://192.168.241.137:3000/api/v1/products/productAnalysis?name=${name}`,
+          `http://192.168.246.137:3000/api/v1/products/productAnalysis?name=${name}`,
         {
           headers: {
             Authorization: `Bearer ${token}`, // Send token in the Authorization header
@@ -47,7 +47,7 @@ const Category = () => {
       }
     } catch (error) {
       console.log(error);
-      Alert.alert("Something went wrong");
+      Alert.alert("Product not found");
     } finally {
       setLoadingProduct(false);
     }
@@ -59,7 +59,7 @@ const Category = () => {
       try {
         const response = await axios.get(
           // `http://10.0.2.2:3000/api/v1/products/allProducts?category=${category}`
-          `http://192.168.241.137:3000/api/v1/products/allProducts?category=${category}`,
+          `http://192.168.246.137:3000/api/v1/products/allProducts?category=${category}`,
         );
         setProducts(response.data.data);
         setFilteredProducts(response.data.data);
@@ -114,7 +114,7 @@ const Category = () => {
       style={styles.productContainer}
       onPress={() => handleProductPress(item.name)}
     >
-      <Image source={{ uri: item.image }} style={styles.productImage} />
+      <Image source={{ uri: item?.image }} style={styles.productImage} />
       <Text style={styles.productName}>{item.name}</Text>
     </TouchableOpacity>
   ));

@@ -9,10 +9,12 @@ import {
   BackHandler,
   FlatList,
   Alert,
+  ImageBackground,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { getToken } from "../../constants/token";
 import axios from "axios";
+import { images } from "../../constants";
 
 // Import all cat images statically
 import snacks from "../assets/images/cat/snacks.jpg";
@@ -51,11 +53,11 @@ const Home = () => {
   useEffect(() => {
     const onBackPress = () => {
       if (isAuthenticated) {
-        router.push('home')
+        router.push('tabs/home')
         return true;
       }
       else{
-        router.push('sign-in')
+        router.push('auth/sign-in')
         return false;
       }
     };
@@ -73,7 +75,7 @@ const Home = () => {
       if (token) {
         try {
           const response = await axios.get(
-            "http://192.168.241.137:3000/api/v1/users/username",
+            "http://192.168.246.137:3000/api/v1/users/username",
             // "http://10.0.2.2:3000/api/v1/users/username",
             {
               headers: {
@@ -96,10 +98,10 @@ const Home = () => {
 
   // Image data for the slider
   const sliderImages = [
-    { id: "1", image: require("../assets/images/image1.jpg") },
-    { id: "2", image: require("../assets/images/image2.jpg") },
-    { id: "3", image: require("../assets/images/image3.jpg") },
-    { id: "4", image: require("../assets/images/image4.jpg") },
+    { id: "1", image: require("../assets/images/article4.jpg") },
+    { id: "2", image: require("../assets/images/article2.jpg") },
+    { id: "3", image: require("../assets/images/article3.jpg") },
+    { id: "4", image: require("../assets/images/article1.jpg") },
   ];
 
   const catImagess = [
@@ -138,13 +140,10 @@ const Home = () => {
     cat16,
   ];
 
-  // State to track the current image index
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Reference for FlatList
   const flatListRef = useRef(null);
 
-  // Handle the slider interval
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) =>
@@ -164,40 +163,18 @@ const Home = () => {
     }
   }, [currentIndex]);
 
-  const handleImageClick = (id) => {
-    router.push(`/article/article${id}`);
-  };
-
   return (
+    // 
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.circularBackground} />
         <View style={styles.header}>
+        <ImageBackground source={images.home} />
           <View style={styles.userIcon}>
             <Text style={styles.userIconText}>{nameLetter}</Text>
           </View>
           <Text style={styles.headerText}>Hi, {name}</Text>
         </View>
-
-        <View style={styles.bannerContainer}>
-          <Image
-            source={require("../assets/images/home_image.png")}
-            style={styles.bannerImage}
-            resizeMode="cover"
-          />
-        </View>
-
-        <TouchableOpacity style={styles.trackButton} disabled={true}>
-          <Text style={styles.trackButtonTextDisabled}>
-            Track Your Progress
-          </Text>
-          <Text
-            style={styles.viewStatus}
-            onPress={() => router.push("tabs/progess")}
-          >
-            View status {">"}
-          </Text>
-        </TouchableOpacity>
 
         <Text style={styles.sectionTitle}>HEALTH TIPS AND ARTICLES</Text>
 
@@ -207,7 +184,7 @@ const Home = () => {
           horizontal
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => handleImageClick(item.id)}>
+            <TouchableOpacity>
               <Image source={item.image} style={styles.sliderImage} />
             </TouchableOpacity>
           )}
@@ -256,84 +233,49 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   scrollContainer: {
-    paddingBottom: 80, // Add padding to account for the fixed navbar
+    paddingBottom: 80,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     padding: "2%",
-    marginTop: "5%",
+    marginTop: "2%",
   },
   userIcon: {
-    width: 35,
-    height: 35,
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
-    marginLeft: 10,
   },
   userIconText: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: "bold",
+    color: "#21bf73"
   },
   headerText: {
     marginLeft: 10,
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
     color: "white",
-  },
-  bannerContainer: {
-    backgroundColor: "white",
-    margin: 15,
-    marginRight: 17,
-    borderRadius: 40,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  bannerImage: {
-    width: "104%",
-    height: 200,
-    borderRadius: 10,
   },
   circularBackground: {
     position: "absolute",
     right: 0,
-    top: "-15%",
+    top: "-5%",
     width: "100%",
-    height: "35%",
-    borderRadius: 400,
+    height: "10%",
+    borderRadius: 100,
     backgroundColor: "#66cf17",
-  },
-  trackButton: {
-    backgroundColor: "#66cf17",
-    padding: 16,
-    margin: 16,
-    borderRadius: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  trackButtonTextDisabled: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  viewStatus: {
-    color: "#66cf17",
-    backgroundColor: "white",
-    padding: 5,
-    paddingLeft: 8,
-    paddingRight: 8,
-    borderRadius: 6,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: "bold",
     color: "gray",
     marginLeft: 70,
-    marginTop: 16,
+    marginTop: "9%",
   },
   articleContainer: {
     margin: 16,

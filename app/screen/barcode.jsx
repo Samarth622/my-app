@@ -3,7 +3,6 @@ import {
   Text,
   ImageBackground,
   ScrollView,
-  Alert,
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,6 +13,7 @@ import CustomButton from "../../components/CustomButton";
 import { router } from "expo-router";
 import axios from "axios";
 import { getToken } from "../../constants/token";
+import Toast from "react-native-toast-message";
 
 const Barcode = () => {
   const [barcode, setBarcode] = useState("");
@@ -21,7 +21,11 @@ const Barcode = () => {
 
   const handleSubmit = async () => {
     if (barcode === "") {
-      Alert.alert("Please write barcode for analysis");
+      Toast.show({
+        type: "error",
+        text1: "Validation Error",
+        text2: "Please write barcode for analysis.",
+      });
       return;
     }
 
@@ -31,8 +35,7 @@ const Barcode = () => {
       const token = await getToken("accessToken");
 
       const response = await axios.post(
-        // "http://10.0.2.2:3000/api/v1/products/analysis",
-        "http://192.168.241.137:3000/api/v1/products/analysis",
+        "http://192.168.246.137:3000/api/v1/products/analysis",
         {
           barcode,
           token,
@@ -41,17 +44,31 @@ const Barcode = () => {
 
       if (response.status === 200) {
         setLoading(false); // Stop the loader after success
-        console.log("Analysis Successfully");
-        router.replace("screen/analysis"); // Redirect to analysis page
+        Toast.show({
+          type: "success",
+          text1: "Analysis Successful",
+          text2: "Redirecting to analysis page...",
+        });
+        setInterval(() => {
+          router.replace("screen/analysis"); // Redirect to analysis page
+        }, 900);
       }
     } catch (error) {
       setLoading(false); // Stop the loader on error
-      if (error.response.status === 404) {
-        Alert.alert("Barcode not found");
+      if (error.response && error.response.status === 404) {
+        Toast.show({
+          type: "error",
+          text1: "Not Found",
+          text2: "Barcode not found. Please try again.",
+        });
         setBarcode("");
       } else {
         console.log(error);
-        Alert.alert("Something went wrong");
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Something went wrong. Please try again later.",
+        });
         setBarcode("");
       }
     }
@@ -92,6 +109,7 @@ const Barcode = () => {
                 containerStyles="ml-[68px] w-[200px] mt-9"
               />
             )}
+            <Toast />
           </View>
         </ScrollView>
       </SafeAreaView>

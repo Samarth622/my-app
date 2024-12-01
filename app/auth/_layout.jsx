@@ -6,12 +6,11 @@ const AuthLayout =  () => {
     <>
       <Stack
         screenOptions={{
-          headerShown: false,
-          headerStyle: { heigth: 0, width: 0 },
+          headerShown: true
         }}
       >
-        <Stack.Screen name="sign-up" />
-        <Stack.Screen name="sign-in" />
+        <Stack.Screen name="sign-up" options={{ title: "Register" }} />
+        <Stack.Screen name="sign-in" options={{ title: "Login" }} />
         <Stack.Screen name="forgot-password" />
       </Stack>
 

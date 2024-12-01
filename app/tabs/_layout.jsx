@@ -25,7 +25,7 @@ const TabsLayout = () => {
       const token = await getToken("accessToken");
       setIsAuthenticated(!!token);
       if (!token) {
-        router.replace("/sign-in");
+        router.replace("auth/sign-in");
       }
     };
 
@@ -33,7 +33,7 @@ const TabsLayout = () => {
 
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
       if (!isAuthenticated) {
-        router.replace("/sign-in");
+        router.replace("auth/sign-in");
         return true;
       }
       return false;
@@ -55,9 +55,9 @@ const TabsLayout = () => {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: "#fff",
-          borderTopWidth: 1,
+          borderTopWidth: 4,
           borderTopColor: "#000",
-          height: 50,
+          height: 60,
         },
       }}
     >
@@ -65,7 +65,7 @@ const TabsLayout = () => {
         name="home"
         options={{
           title: "Home",
-          headerShown: false,
+          headerShown: true,
           tabBarIcon: ({ color, focused }) => (
             <TabIcon
               icon={icons.home}
@@ -79,7 +79,7 @@ const TabsLayout = () => {
         name="scan"
         options={{
           title: "Scan",
-          headerShown: false,
+          headerShown: true,
           tabBarIcon: ({ color, focused }) => (
             <TabIcon
               icon={icons.plus}
@@ -93,7 +93,7 @@ const TabsLayout = () => {
         name="profile"
         options={{
           title: "Profile",
-          headerShown: false,
+          headerShown: true,
           tabBarIcon: ({ color, focused }) => (
             <TabIcon
               icon={icons.profile}

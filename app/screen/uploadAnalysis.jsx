@@ -5,6 +5,7 @@ import { ImageBackground, ScrollView, TouchableOpacity, Modal, Button, Image, St
 import { ProgressBar } from "react-native-paper";
 import images from "../../constants/images"
 import { Rating } from "react-native-elements";
+import Toast from "react-native-toast-message";
 
 
 const UploadAnalysis = () => {
@@ -30,15 +31,25 @@ const UploadAnalysis = () => {
 
   const fetchAnalysis = async () => {
     try{
-      const response = await axios.get(`http://192.168.241.137:3000/api/v1/products/imageAnalysis`);
+      const response = await axios.get(`http://192.168.246.137:3000/api/v1/products/imageAnalysis`);
     if (response.status == 200) {
         const { analysis, productDescription, healthMeter } = response.data.data
         setAnalysis(analysis)
         setProductDescription(productDescription)
         setRating(healthMeter / 2.5)
+        Toast.show({
+          type: 'success',
+          text1: 'Analysis Fetched',
+          text2: 'Data retrieved successfully.',
+        });
       }
     } catch (error) {
-      console.log("Error from fetchAnalysis: ", error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Failed to fetch analysis. Please try again later.',
+      });
+      console.error('Error from fetchAnalysis: ', error);
     } finally {
       setIsLoading(false);
     }
@@ -79,11 +90,6 @@ const UploadAnalysis = () => {
           </View>
           <View style={styles.productContainer}>
             <View style={styles.productHeader}>
-              {/* {imgUrl ? (
-                <Image source={{ uri: imgUrl }} style={styles.productImage} />
-              ) : (
-                <Text>Image not found</Text>
-              )} */}
               {/* <Text>Image not found</Text> */}
               <View style={styles.productDetails}>
                 <Text style={styles.productName}>Product Image Analysis</Text>
@@ -163,6 +169,7 @@ const UploadAnalysis = () => {
             <Text style={styles.conclusionHeader}>Conclusion</Text>
             <Text style={styles.conclusionText}>{productDescription}</Text>
           </View>
+          <Toast />
         </View>
       </ScrollView>
     </ImageBackground>

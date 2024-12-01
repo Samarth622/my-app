@@ -7,5 +7,8 @@ import empty from "../assets/images/empty.png";
 import background from "../assets/images/background.png"
 import img from "../assets/images/img.png"
 import scanFood from "../assets/images/scanFood.png"
+import home from "../assets/images/home.png"
+import lr from "../assets/images/lr.png"
+import start from "../assets/images/start.png"
 
-export default { profile, thumbnail, img, path, logo, logoSmall, empty, background, scanFood };
+export default { profile, thumbnail, img, path, logo, logoSmall, empty, background, scanFood, home, lr, start };
